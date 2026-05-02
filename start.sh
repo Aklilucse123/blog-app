@@ -3,6 +3,7 @@
 echo "Starting Laravel..."
 
 # Create .env if not exists
+
 if [ ! -f .env ]; then
     cp .env.example .env
 fi
