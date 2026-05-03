@@ -1,27 +1,33 @@
-From php:8.2-cli
+FROM php:8.2-cli
 
-# Install dependecies
-Run apt-get update && apt-get install -y \
-git unzip curl zip \
-sqlite3 libsqlite3-dev
-libonig-dev libxml2-dev \
-build-essential
-# Install Php extensions
-Run docker-php-ext-install pdo pdo_sqlite mbstring bcmath
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git unzip curl zip \
+    sqlite3 libsqlite3-dev \
+    libonig-dev libxml2-dev \
+    build-essential
 
-#Install Composer
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_sqlite mbstring bcmath
 
-Copy --from=composer:latest/usr/bin/composer /usr/bin/composer
- WORKDIR /var/www
- COPY  ..
- # Install laravel depencies
- Run composer install --no-dev --optimize-autoloader
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
- # Permissions
- RUN chmod -R 775 storage bootstrap/cache
- #make start script exectuble
- RUN chmod +x start.sh
- EXPOSE 1000
+WORKDIR /var/www
 
- #start app
- CMD [ "sh", "start.sh" ]
+# Copy project
+COPY . .
+
+# Install Laravel dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Permissions
+RUN chmod -R 775 storage bootstrap/cache
+
+# Make start script executable
+RUN chmod +x start.sh
+
+EXPOSE 10000
+
+# Start app
+CMD ["sh", "start.sh"]

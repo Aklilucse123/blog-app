@@ -1,21 +1,23 @@
 #!/bin/sh
-ech0 "Starting laravel ..."
 
-if [! -f .env]; then
-cp .env.example .env
+echo "Starting Laravel..."
+
+# Create .env if not exists
+if [ ! -f .env ]; then
+    cp .env.example .env
 fi
 
-# Generate Key
+# Generate key
 php artisan key:generate --force
-  
-  # Run migration
+
+# Run migrations
 php artisan migrate --force
 
-#Storage link
+# Storage link
 php artisan storage:link || true
 
-#clear cache
+# Clear cache
 php artisan optimize:clear
 
-#Start server
-php artisan serve --host=0.0.0.0 --port=1000
+# Start server
+php artisan serve --host=0.0.0.0 --port=10000
